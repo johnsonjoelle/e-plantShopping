@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
+import { addItem, removeItem, updateQuantity } from './CartSlice';
+import { useDispatch } from 'react-redux';
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const [addedToCart, setAddedToCart] = useState({});
+    const dispatch = useDispatch();
+
+    const handleAddToCart = (product) => {
+        dispatch(addItem(product));
+        setAddedToCart((prevState) => ({
+            ...prevState,
+            [product.name]: true
+        }));
+    }
 
     const plantsArray = [
         {
@@ -274,7 +286,28 @@ function ProductList({ onHomeClick }) {
             </div>
             {!showCart ? (
                 <div className="product-grid">
-
+                    {plantsArray.map((item, index) => (
+                        <div className='category-container' key={index}>
+                            <h2>{item.category}</h2>
+                            <div className='product-list'>
+                                {/* Print all Plants */}
+                                {item.plants.map((plantItem, plantIndex) => (
+                                    <div className='product-card' key={plantIndex}>
+                                    <h4 className='product-title'>{plantItem.name}</h4>
+                                    <img src={plantItem.image} className='product-image'/>
+                                    <p className='product-price'>{plantItem.cost}</p>
+                                    <p className='plant-description'>{plantItem.description}</p>
+                                    <button 
+                                        className='product-button'
+                                        oncClick={() => handleAddToCart(plantItem)}
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
 
                 </div>
             ) : (
